@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: #022c22; /* emerald-950 */
+  color: white;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom highlight color when users select text */
+::selection {
+  background-color: #a3e635; /* lime-400 */
+  color: #022c22;
+}
+
+/* Smooth custom scrollbar for that premium crypto feel */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #022c22;
+}
+::-webkit-scrollbar-thumb {
+  background: #065f46;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a3e635;
+}
