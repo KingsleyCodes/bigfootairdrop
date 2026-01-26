@@ -13,17 +13,36 @@ export default function AirdropForm() {
   const [status, setStatus] = useState("");
   const [refLink, setRefLink] = useState("");
 
+  // Task States for your specific links
+  const [tasks, setTasks] = useState({
+    twitterFoot: false,
+    telegramHunter: false,
+    twitterGekko: false,
+  });
+
   const referrer = searchParams.get('ref');
+
+  // Helper to handle task clicks
+  const completeTask = (taskName, url) => {
+    window.open(url, '_blank');
+    setTasks(prev => ({ ...prev, [taskName]: true }));
+  };
+
+  const allTasksDone = tasks.twitterFoot && tasks.telegramHunter && tasks.twitterGekko;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!allTasksDone) {
+      return alert("You must follow all accounts and join the Telegram to unlock your allocation!");
+    }
+    
     if (!wallet || !email) return alert("Hunters need a wallet and email!");
     
     setLoading(true);
     setStatus("");
 
     try {
-      console.log("Connecting to the forest..."); // Debug log
       const userRef = doc(db, "hunters", wallet.toLowerCase().trim());
       const userSnap = await getDoc(userRef);
 
@@ -31,16 +50,15 @@ export default function AirdropForm() {
         setStatus("You're already in the hunt!");
         setRefLink(`${window.location.origin}?ref=${wallet.toLowerCase().trim()}`);
       } else {
-        // Register new user
         await setDoc(userRef, {
           wallet: wallet.toLowerCase().trim(),
           email: email.trim(),
           referredBy: referrer ? referrer.toLowerCase().trim() : "direct",
           referrals: 0,
+          tasksCompleted: true,
           timestamp: new Date()
         });
 
-        // Credit the referrer if one exists
         if (referrer && referrer.toLowerCase().trim() !== wallet.toLowerCase().trim()) {
           const referrerRef = doc(db, "hunters", referrer.toLowerCase().trim());
           const refSnap = await getDoc(referrerRef);
@@ -49,14 +67,14 @@ export default function AirdropForm() {
           }
         }
 
-        setStatus("Successfully joined!");
+        setStatus("Successfully joined the pack!");
         setRefLink(`${window.location.origin}?ref=${wallet.toLowerCase().trim()}`);
       }
     } catch (err) {
-      console.error("FIREBASE ERROR:", err); // This will print the EXACT error now
-      setStatus("Connection error. Check console.");
+      console.error("FIREBASE ERROR:", err);
+      setStatus("The forest connection failed. Try again.");
     } finally {
-      setLoading(false); // This ensures the button stops saying "Registering"
+      setLoading(false);
     }
   };
 
@@ -68,50 +86,79 @@ export default function AirdropForm() {
           className="bg-emerald-900/80 backdrop-blur-md p-6 md:p-8 rounded-3xl border border-emerald-700 shadow-2xl space-y-5"
         >
           <div className="text-center mb-2">
-            <h2 className="text-xl font-black text-white uppercase tracking-tight">Join the Hunt</h2>
-            <p className="text-xs text-emerald-400 font-bold uppercase">Enter your details for the 50M pool</p>
+            <h2 className="text-xl font-black text-white uppercase tracking-tight italic">Join the Hunt</h2>
+            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Complete 3 tasks to unlock 50M $FOOT</p>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-black text-emerald-500 mb-1 ml-1 uppercase tracking-widest">
-              Wallet Address
-            </label>
-            <input 
-              required
-              className="w-full bg-emerald-950 border border-emerald-800 p-4 rounded-xl text-white focus:border-lime-400 outline-none transition-all placeholder:text-emerald-800"
-              placeholder="0x... or Solana Address"
-              value={wallet}
-              onChange={(e) => setWallet(e.target.value)}
-            />
+          {/* Social Task Checklist Section */}
+          <div className="space-y-3 bg-emerald-950/50 p-4 rounded-2xl border border-emerald-800">
+            <h3 className="text-[10px] font-black text-lime-400 uppercase mb-2 tracking-widest">Required Steps</h3>
+            
+            {/* Task 1: FootBig92126 */}
+            <button 
+              type="button"
+              onClick={() => completeTask('twitterFoot', 'https://x.com/FootBig92126')}
+              className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${tasks.twitterFoot ? 'border-lime-500 bg-lime-500/10' : 'border-emerald-700 bg-emerald-900 hover:border-emerald-500'}`}
+            >
+              <span className="text-xs font-bold text-white">Follow @FootBig92126</span>
+              {tasks.twitterFoot ? <span className="text-lime-400 font-bold">✓</span> : <span className="bg-emerald-800 px-2 py-1 rounded text-[9px] font-bold text-emerald-400 uppercase">Follow</span>}
+            </button>
+
+            {/* Task 2: Telegram */}
+            <button 
+              type="button"
+              onClick={() => completeTask('telegramHunter', 'https://t.me/bigfoothunterai')}
+              className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${tasks.telegramHunter ? 'border-lime-500 bg-lime-500/10' : 'border-emerald-700 bg-emerald-900 hover:border-emerald-500'}`}
+            >
+              <span className="text-xs font-bold text-white">Join Telegram Group</span>
+              {tasks.telegramHunter ? <span className="text-lime-400 font-bold">✓</span> : <span className="bg-emerald-800 px-2 py-1 rounded text-[9px] font-bold text-emerald-400 uppercase">Join</span>}
+            </button>
+
+            {/* Task 3: GordonGekko */}
+            <button 
+              type="button"
+              onClick={() => completeTask('twitterGekko', 'https://x.com/GordonGekko')}
+              className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${tasks.twitterGekko ? 'border-lime-500 bg-lime-500/10' : 'border-emerald-700 bg-emerald-900 hover:border-emerald-500'}`}
+            >
+              <span className="text-xs font-bold text-white">Follow @GordonGekko</span>
+              {tasks.twitterGekko ? <span className="text-lime-400 font-bold">✓</span> : <span className="bg-emerald-800 px-2 py-1 rounded text-[9px] font-bold text-emerald-400 uppercase">Follow</span>}
+            </button>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-black text-emerald-500 mb-1 ml-1 uppercase tracking-widest">
-              Email Address
-            </label>
-            <input 
-              required
-              type="email"
-              className="w-full bg-emerald-950 border border-emerald-800 p-4 rounded-xl text-white focus:border-lime-400 outline-none transition-all placeholder:text-emerald-800"
-              placeholder="hunter@forest.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <div className="space-y-4 pt-2">
+            <div>
+              <label className="block text-[10px] font-black text-emerald-500 mb-1 ml-1 uppercase">Solana Wallet Address</label>
+              <input 
+                required
+                className="w-full bg-emerald-950 border border-emerald-800 p-4 rounded-xl text-white focus:border-lime-400 outline-none text-sm transition-all"
+                placeholder="0x... or Solana Address"
+                value={wallet}
+                onChange={(e) => setWallet(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black text-emerald-500 mb-1 ml-1 uppercase">Contact Email</label>
+              <input 
+                required
+                type="email"
+                className="w-full bg-emerald-950 border border-emerald-800 p-4 rounded-xl text-white focus:border-lime-400 outline-none text-sm transition-all"
+                placeholder="hunter@forest.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
 
           <button 
-            disabled={loading}
-            className="w-full bg-lime-400 text-emerald-950 font-black py-4 rounded-xl hover:bg-lime-300 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(163,230,53,0.2)]"
+            disabled={loading || !allTasksDone}
+            className="w-full bg-lime-400 text-emerald-950 font-black py-4 rounded-xl hover:bg-lime-300 transition-all active:scale-95 disabled:opacity-30 disabled:grayscale shadow-[0_0_20px_rgba(163,230,53,0.3)] uppercase tracking-tighter"
           >
-            {loading ? "REGISTERING..." : "CLAIM 50M AIRDROP"}
+            {loading ? "REGISTERING..." : allTasksDone ? "CLAIM 50M AIRDROP" : "FINISH TASKS TO UNLOCK"}
           </button>
 
           {status && (
-            <div className="bg-emerald-950/50 py-2 px-4 rounded-lg border border-emerald-800">
-              <p className="text-center text-xs font-bold text-lime-400 uppercase tracking-tighter">
-                {status}
-              </p>
-            </div>
+            <p className="text-center text-xs font-bold text-lime-400 uppercase animate-pulse italic">{status}</p>
           )}
         </form>
       ) : (
