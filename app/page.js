@@ -48,11 +48,11 @@ export default function Home() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full mt-24">
           <InfoCard 
             title="Refer & Earn" 
-            desc="Every friend you refer increases your multiplier in the 50M token pool."
+            desc="Every friend you refer increases your multiplier in the 50000 Big Foot Tokens."
           />
           <InfoCard 
             title="Wallet Based" 
-            desc="No passwords. Use your Solana or Ethereum address to track your hunt."
+            desc="No passwords. Use your Solana address to track your hunt."
           />
           <InfoCard 
             title="Fair Launch" 

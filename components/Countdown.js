@@ -2,25 +2,62 @@
 import { useState, useEffect } from 'react';
 
 export default function Countdown() {
-  const [days, setDays] = useState(0);
+  // Initialize with 0s to avoid flickering on load
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
 
   useEffect(() => {
-    // Set a target date 30 days from now for demo
-    setDays(30);
+    /** * FIXED TARGET DATE: February 13th, 2026
+     * JavaScript months are 0-indexed (0 = Jan, 1 = Feb).
+     * This creates a timestamp for Feb 13, 2026 at 00:00:00 (Midnight).
+     */
+    const targetDate = new Date(2026, 1, 13, 0, 0, 0).getTime();
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference <= 0) {
+        // Stop the timer if we hit the date
+        clearInterval(timer);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      } else {
+        // Calculate the actual remaining time
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        });
+      }
+    }, 1000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(timer);
   }, []);
 
+  // Internal Helper Component for the countdown boxes
   const Card = ({ label, value }) => (
-    <div className="flex flex-col items-center bg-emerald-900/40 border border-emerald-800 p-4 rounded-xl min-w-[80px]">
-      <span className="text-3xl font-black text-lime-400">{value}</span>
-      <span className="text-[10px] uppercase text-emerald-500 font-bold">{label}</span>
+    <div className="flex flex-col items-center bg-emerald-900/40 border border-emerald-800 p-4 rounded-xl min-w-[80px] backdrop-blur-sm shadow-lg">
+      <span className="text-3xl font-black text-lime-400 tabular-nums">
+        {String(value).padStart(2, '0')}
+      </span>
+      <span className="text-[10px] uppercase text-emerald-500 font-bold tracking-widest">
+        {label}
+      </span>
     </div>
   );
 
   return (
-    <div className="flex gap-4 justify-center my-8">
-      <Card label="Days" value={days} />
-      <Card label="Hours" value="23" />
-      <Card label="Mins" value="59" />
+    <div className="flex flex-wrap gap-4 justify-center my-8 scale-90 md:scale-100 relative z-20">
+      <Card label="Days" value={timeLeft.days} />
+      <Card label="Hours" value={timeLeft.hours} />
+      <Card label="Mins" value={timeLeft.minutes} />
+      <Card label="Secs" value={timeLeft.seconds} />
     </div>
   );
 }
