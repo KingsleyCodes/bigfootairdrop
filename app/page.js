@@ -48,7 +48,7 @@ export default function Home() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full mt-24">
           <InfoCard 
             title="Refer & Earn" 
-            desc="Every friend you refer increases your multiplier in the 50000 Big Foot Tokens."
+            desc="Every friend you refer increases your multiplier by 5000 Big Foot Tokens."
           />
           <InfoCard 
             title="Wallet Based" 
