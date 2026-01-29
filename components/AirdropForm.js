@@ -13,12 +13,13 @@ export default function AirdropForm() {
   const [status, setStatus] = useState("");
   const [refLink, setRefLink] = useState("");
 
-  // Task States for all 4 specific requirements
+  // Task States for all 5 specific requirements
   const [tasks, setTasks] = useState({
     twitterFoot: false,
     telegramHunter: false,
     twitterGekko: false,
     twitterKasogon: false,
+    twitterRetweet: false,
   });
 
   const referrer = searchParams.get('ref');
@@ -29,18 +30,19 @@ export default function AirdropForm() {
     setTasks(prev => ({ ...prev, [taskName]: true }));
   };
 
-  // Logic to ensure all 4 tasks are clicked
+  // Logic to ensure all 5 tasks are clicked
   const allTasksDone = 
     tasks.twitterFoot && 
     tasks.telegramHunter && 
     tasks.twitterGekko && 
-    tasks.twitterKasogon;
+    tasks.twitterKasogon &&
+    tasks.twitterRetweet;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!allTasksDone) {
-      return alert("You must complete all 4 tasks to unlock your allocation!");
+      return alert("You must complete all 5 tasks to unlock your allocation!");
     }
     
     if (!wallet || !email) return alert("Hunters need a wallet and email!");
@@ -93,7 +95,7 @@ export default function AirdropForm() {
         >
           <div className="text-center mb-2">
             <h2 className="text-xl font-black text-white uppercase tracking-tight italic">Join the Hunt</h2>
-            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Complete 4 tasks to unlock 50M $FOOT</p>
+            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Complete 5 tasks to unlock 50M $FOOT</p>
           </div>
 
           {/* Social Task Checklist Section */}
@@ -138,6 +140,16 @@ export default function AirdropForm() {
             >
               <span className="text-xs font-bold text-white">Follow @Cryptokasogon</span>
               {tasks.twitterKasogon ? <span className="text-lime-400 font-bold">✓</span> : <span className="bg-emerald-800 px-2 py-1 rounded text-[9px] font-bold text-emerald-400 uppercase">Follow</span>}
+            </button>
+
+            {/* Task 5: Like & Retweet Post */}
+            <button 
+              type="button"
+              onClick={() => completeTask('twitterRetweet', 'https://x.com/FootBig92126/status/2016565575510548764')}
+              className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${tasks.twitterRetweet ? 'border-lime-500 bg-lime-500/10' : 'border-emerald-700 bg-emerald-900 hover:border-emerald-500'}`}
+            >
+              <span className="text-xs font-bold text-white">Like & Retweet Pinned Post</span>
+              {tasks.twitterRetweet ? <span className="text-lime-400 font-bold">✓</span> : <span className="bg-emerald-800 px-2 py-1 rounded text-[9px] font-bold text-emerald-400 uppercase">GO</span>}
             </button>
           </div>
 
