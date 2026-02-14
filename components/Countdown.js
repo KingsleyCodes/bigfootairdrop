@@ -15,7 +15,7 @@ export default function Countdown() {
      * Note: JavaScript months are 0-indexed (0 = January, 1 = February).
      * This sets the target to Feb 14, 2026, at 00:00:00 (Midnight).
      */
-    const targetDate = new Date(2026, 1, 14, 0, 0, 0).getTime();
+    const targetDate = new Date(2026, 1, 16, 0, 0, 0).getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
